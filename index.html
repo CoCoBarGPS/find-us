@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoCoBar 附近據點查詢</title>
+    <title>CoCoBar 據點查詢</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #f4f7f9; margin: 0; padding: 20px; color: #333; }
         .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -16,7 +16,7 @@
         .store-name { font-weight: bold; font-size: 1.1rem; color: #222; }
         .store-dist { color: #FF5722; font-size: 0.9rem; font-weight: bold; }
         .store-addr { color: #666; font-size: 0.85rem; margin-top: 5px; }
-        .btn-nav { background: #4CAF50; color: white; text-decoration: none; padding: 8px 12px; border-radius: 5px; font-size: 0.8rem; white-space: nowrap; margin-left: 10px; }
+        .btn-copy { background: #2196F3; color: white; border: none; padding: 8px 12px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -30,6 +30,7 @@
 </div>
 
 <script>
+    // 這裡放入您的 65 個營業點座標資料 (為節省空間僅列出前幾筆，請務必保留完整列表)
     const stores = [
         {"name":"CoCoBar-基隆摩亞百貨","addr":"基隆市中正區信一路177號1樓","lat":25.1294,"lng":121.7441},{"name":"CoCoBar-微風東岸","addr":"基隆市仁愛區仁二路236號 3樓","lat":25.1287,"lng":121.7444},{"name":"CoCoBar-iFG 遠雄廣場","addr":"新北市汐止區新台五路一段93-99號1樓 (A棟)","lat":25.0617,"lng":121.6508},{"name":"CoCoBar-南港環球購物中心","addr":"台北市南港區忠孝東路七段371號B1","lat":25.0521,"lng":121.6068},{"name":"CoCoBar-LaLaport 南港威秀影城","addr":"台北市南港區經貿二路105巷1號6F","lat":25.0592,"lng":121.6160},{"name":"CoCoBar-美麗華百樂園(1樓)","addr":"台北市中山區敬業三路20號一樓","lat":25.0836,"lng":121.5574},{"name":"CoCoBar-大直美麗華(6樓)","addr":"台北市中山區敬業三路22號6樓","lat":25.0836,"lng":121.5574},{"name":"CoCoBar-台北京站－時尚廣場(4樓)","addr":"台北市大同區承德路一段1號4樓","lat":25.0492,"lng":121.5170},{"name":"CoCoBar-台北京站－威秀影城 (5樓)","addr":"台北市大同區市民大道一段209號5樓","lat":25.0485,"lng":121.5173},{"name":"CoCoBar-信義威秀商店街","addr":"台北市信義區松壽路20號1樓","lat":25.0354,"lng":121.5670},{"name":"CoCoBar-信義ATT","addr":"台北市信義區松壽路12號2樓","lat":25.0348,"lng":121.5663},{"name":"CoCoBar-微風松高","addr":"台北市信義區松高路16號B1","lat":25.0392,"lng":121.5666},{"name":"CoCoBar-DREAM PLAZA","addr":"臺北市信義區松高路11號5樓","lat":25.0395,"lng":121.5654},{"name":"CoCoBar-微風南山","addr":"台北市信義區松智路17號B2","lat":25.0336,"lng":121.5669},{"name":"CoCoBar-亞洲廣場大樓","addr":"台北市中正區忠孝西路一段50號B3","lat":25.0465,"lng":121.5152},{"name":"CoCoBar-東森k區地下街","addr":"台北市中正區忠孝西路一段47號B1","lat":25.0471,"lng":121.5165},{"name":"CoCoBar-台北表演藝術中心","addr":"台北市士林區劍潭路1號1樓(北斗座廣場)","lat":25.0858,"lng":121.5244},{"name":"CoCoBar-西門威秀","addr":"臺北市萬華區漢中街52號9樓","lat":25.0441,"lng":121.5074},{"name":"CoCoBar-西門地下市/B1","addr":"台北市中正區中華路一段51號B1","lat":25.0448,"lng":121.5085},{"name":"CoCoBar-台北小巨蛋","addr":"台北市松山區南京東路4段2號一樓   (二號北區入口)","lat":25.0514,"lng":121.5504},{"name":"CoCoBar-捷運中山站-爵士廣場","addr":"台北市大同區民生西路47號B1","lat":25.0526,"lng":121.5204},{"name":"CoCoBar-捷運西門站","addr":"台北市中正區建國里寶慶路32-1號地下1樓","lat":25.0422,"lng":121.5084},{"name":"CoCoBar-東區地下街第二廣場","addr":"台北市大安區光武里大安路1段77號B1","lat":25.0413,"lng":121.5435},{"name":"CoCoBar-捷運公館","addr":"台北市中正區羅斯福路4段74號B1(接近4號出口)","lat":25.0135,"lng":121.5341},{"name":"CoCoBar-捷運板橋站","addr":"新北市板橋區新民里站前路5號地下一層","lat":25.0130,"lng":121.4623},{"name":"CoCoBar-中和環球購物中心","addr":"新北市中和區中山路三段122號4F","lat":25.0063,"lng":121.4746},{"name":"CoCoBar-土城日月光廣場","addr":"新北市土城區學府路二段210號1樓","lat":24.9830,"lng":121.4429},{"name":"CoCoBar-禮萊廣場國賓影城-1樓","addr":"新北市淡水區中正路一段2號1樓","lat":25.1768,"lng":121.4299},{"name":"CoCoBar-悠遊食代-淡水商場-5樓","addr":"新北市淡水區中山路8號5樓","lat":25.1685,"lng":121.4452},{"name":"CoCoBar-宏匯廣場","addr":"新北市新莊區新北大道４段3號7樓","lat":25.0608,"lng":121.4514},{"name":"CoCoBar-林口OUTLET PARK","addr":"新北市林口區文化三路一段356號3樓","lat":25.0701,"lng":121.3639},{"name":"CoCoBar-板橋大遠百威秀影城","addr":"新北市板橋區新站路28號10樓","lat":25.0137,"lng":121.4641},{"name":"CoCoBar-京站小碧潭","addr":"新北市新店區中央路157號5樓","lat":24.9734,"lng":121.5303},{"name":"CoCoBar-新店裕隆城威秀影城","addr":"新北市新店區中興路三段70號7樓","lat":24.9780,"lng":121.5457},{"name":"CoCoBar-碧潭廣場","addr":"新北市新店區北宜路一段16號2樓","lat":24.9575,"lng":121.5376},{"name":"CoCoBar-中壢威尼斯","addr":"桃園市中壢區九和一街18號2樓","lat":24.9626,"lng":121.2255},{"name":"CoCoBar-JC Park(中壢店)4樓","addr":"桃園市中壢區中正路51號4樓","lat":24.9571,"lng":121.2251},{"name":"CoCoBar-桃園ATT筷食尚","addr":"桃園市桃園區中正路47號5樓","lat":24.9902,"lng":121.3129},{"name":"CoCoBar-台茂美麗新影城","addr":"桃園市蘆竹區南崁路一段112號 7樓","lat":25.0526,"lng":121.2882},{"name":"CoCoBar-統領廣場 桃園店","addr":"桃園市桃園區中正路61號5樓","lat":24.9918,"lng":121.3121},{"name":"CoCoBar-置地廣場桃園","addr":"桃園市中壢區春德路101號1樓","lat":25.0130,"lng":121.2139},{"name":"CoCoBar-竹北遠東8F","addr":"新竹縣竹北市莊敬北路18號8樓","lat":24.8239,"lng":121.0287},{"name":"CoCoBar-新竹 勝利店","addr":"新竹市東區勝利路12號一樓","lat":24.8021,"lng":120.9706},{"name":"CoCoBar-大魯閣湳雅廣場","addr":"新竹市北區湳雅街91-2號B1","lat":24.8211,"lng":120.9634},{"name":"CoCoBar-竹北享平方","addr":"新竹縣竹北市自強南路36號二樓","lat":24.8159,"lng":121.0284},{"name":"CoCoBar-新竹大遠百威秀","addr":"新竹市東區四大路323號8樓","lat":24.8022,"lng":120.9649},{"name":"CoCoBar-苗栗尚順","addr":"苗栗縣頭份市育樂街6號2樓","lat":24.6893,"lng":120.9074},{"name":"CoCoBar-台中捷運-中清站3F","addr":"台中市北區文心路三段700號3F","lat":24.1729,"lng":120.6556},{"name":"CoCoBar-台中捷運-市政府站3F","addr":"台中市西屯區文心路二段699號3F","lat":24.1625,"lng":120.6481},{"name":"CoCoBar-新時代4樓威秀","addr":"台中市東區復興路四段186號4樓","lat":24.1362,"lng":120.6868},{"name":"CoCoBar-台中大遠百威秀影城","addr":"台中市西屯區台灣大道三段251號13樓","lat":24.1643,"lng":120.6436},{"name":"CoCoBar-老虎城","addr":"台中市西屯區河南路三段120號","lat":24.1633,"lng":120.6384},{"name":"CoCoBar-豐原IN895F","addr":"台中市豐原區成功路500號5F","lat":24.2418,"lng":120.7201},{"name":"CoCoBar-台中秀泰站前店二館","addr":"台中市東區南京路66號 3F","lat":24.1396,"lng":120.6898},{"name":"CoCoBar-新光三越台南中山店","addr":"台南市中西區中山路162號12樓","lat":22.9947,"lng":120.2057},{"name":"CoCoBar-台南FOCUS威秀影城","addr":"台南市中西區中山路166號11樓","lat":22.9949,"lng":120.2057},{"name":"CoCoBar-國賓一館","addr":"台南市東區中華東路一段88號 1樓","lat":22.9959,"lng":120.2319},{"name":"CoCoBar-成大商場1F","addr":"台南市東區勝利路118號1樓","lat":22.9953,"lng":120.2173},{"name":"CoCoBar-新光三越高雄左營店","addr":"高雄市左營區高鐵路123號B1","lat":22.6876,"lng":120.3068},{"name":"CoCoBar-MLD台鋁","addr":"高雄市前鎮區忠勤路8號1樓","lat":22.6053,"lng":120.3005},{"name":"CoCoBar-高雄大遠百","addr":"高雄市苓雅區三多四路21號","lat":22.6133,"lng":120.3039}
     ];
@@ -40,6 +41,19 @@
         const dLon = (lon2-lon1) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    // 複製地址功能
+    function copyToClipboard(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = btn.innerText;
+            btn.innerText = "已複製！";
+            btn.style.background = "#4CAF50";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "#2196F3";
+            }, 1500);
+        });
     }
 
     function findNearestStores() {
@@ -57,10 +71,9 @@
             const uLat = position.coords.latitude;
             const uLng = position.coords.longitude;
 
-            // 計算所有店家的距離並排序
             let results = stores.map(s => {
                 return { ...s, distance: getDistance(uLat, uLng, s.lat, s.lng) };
-            }).sort((a, b) => a.distance - b.distance).slice(0, 10); // 取前 10 名
+            }).sort((a, b) => a.distance - b.distance).slice(0, 10);
 
             loader.style.display = 'none';
             status.innerText = "已為您找到最近的 10 個據點：";
@@ -75,11 +88,10 @@
                         <div class="store-name">${s.name} <span class="store-dist">(${distText})</span></div>
                         <div class="store-addr">${s.addr}</div>
                     </div>
-                    <a class="btn-nav" href="https://google.com{s.lat},${s.lng}" target="_blank">導航</a>
+                    <button class="btn-copy" onclick="copyToClipboard('${s.addr}', this)">複製地址</button>
                 `;
                 listDiv.appendChild(item);
             });
-
         }, (error) => {
             loader.style.display = 'none';
             btn.style.display = 'block';
@@ -87,6 +99,5 @@
         }, { enableHighAccuracy: true });
     }
 </script>
-
 </body>
 </html>
