@@ -1,36 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoCoBar 快速導航</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f8f9fa; text-align: center; }
-        .container { padding: 30px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 85%; max-width: 400px; }
-        .btn { color: white; padding: 18px 30px; border-radius: 35px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; text-decoration: none; display: block; margin: 20px auto; width: 100%; box-sizing: border-box; }
-        #locateBtn { background: #FF9800; }
-        #goBtn { background: #4CAF50; display: none; } /* 初始隱藏導航按鈕 */
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #FF9800; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div id="loader" class="loader"></div>
-        <h2 id="status">尋找最近的 CoCoBar</h2>
-        <p id="info">請開啟 GPS 定位，為您尋找最近據點。</p>
-        
-        <!-- 步驟 1：定位按鈕 -->
-        <button id="locateBtn" class="btn" onclick="findNearest()">1. 點我開始定位</button>
-        
-        <!-- 步驟 2：真正的 HTML 連結按鈕 (解決安全攔截問題) -->
-        <a id="goBtn" class="btn" href="#" target="_blank">2. 點我開啟 Google 地圖</a>
-        
-        <div id="result" style="margin-top: 20px; font-weight: bold; color: #333; font-size: 1.1rem;"></div>
-    </div>
-
     <script>
-        // 內含您提供的 65 個營業點座標 (已省略部分以節省空間，請確保您的版本包含全部座標)
         const stores = [
             {"name":"CoCoBar-基隆摩亞百貨","lat":25.1294,"lng":121.7441},{"name":"CoCoBar-微風東岸","lat":25.1287,"lng":121.7444},{"name":"CoCoBar-iFG 遠雄廣場","lat":25.0617,"lng":121.6508},{"name":"CoCoBar-南港環球購物中心","lat":25.0521,"lng":121.6068},{"name":"CoCoBar-LaLaport 南港威秀影城","lat":25.0592,"lng":121.6160},{"name":"CoCoBar-美麗華百樂園(1樓)","lat":25.0836,"lng":121.5574},{"name":"CoCoBar-大直美麗華(6樓)","lat":25.0836,"lng":121.5574},{"name":"CoCoBar-台北京站－時尚廣場(4樓)","lat":25.0492,"lng":121.5170},{"name":"CoCoBar-台北京站－威秀影城 (5樓)","lat":25.0485,"lng":121.5173},{"name":"CoCoBar-信義威秀商店街","lat":25.0354,"lng":121.5670},{"name":"CoCoBar-信義ATT","lat":25.0348,"lng":121.5663},{"name":"CoCoBar-微風松高","lat":25.0392,"lng":121.5666},{"name":"CoCoBar-DREAM PLAZA","lat":25.0395,"lng":121.5654},{"name":"CoCoBar-微風南山","lat":25.0336,"lng":121.5669},{"name":"CoCoBar-亞洲廣場大樓","lat":25.0465,"lng":121.5152},{"name":"CoCoBar-東森k區地下街","lat":25.0471,"lng":121.5165},{"name":"CoCoBar-台北表演藝術中心","lat":25.0858,"lng":121.5244},{"name":"CoCoBar-西門威秀","lat":25.0441,"lng":121.5074},{"name":"CoCoBar-西門地下市/B1","lat":25.0448,"lng":121.5085},{"name":"CoCoBar-台北小巨蛋","lat":25.0514,"lng":121.5504},{"name":"CoCoBar-捷運中山站-爵士廣場","lat":25.0526,"lng":121.5204},{"name":"CoCoBar-捷運西門站","lat":25.0422,"lng":121.5084},{"name":"CoCoBar-東區地下街第二廣場","lat":25.0413,"lng":121.5435},{"name":"CoCoBar-捷運公館","lat":25.0135,"lng":121.5341},{"name":"CoCoBar-捷運板橋站","lat":25.0130,"lng":121.4623},{"name":"CoCoBar-中和環球購物中心","lat":25.0063,"lng":121.4746},{"name":"CoCoBar-土城日月光廣場","lat":24.9830,"lng":121.4429},{"name":"CoCoBar-禮萊廣場國賓影城","lat":25.1768,"lng":121.4299},{"name":"CoCoBar-悠遊食代-淡水商場","lat":25.1685,"lng":121.4452},{"name":"CoCoBar-宏匯廣場","lat":25.0608,"lng":121.4514},{"name":"CoCoBar-林口OUTLET PARK","lat":25.0701,"lng":121.3639},{"name":"CoCoBar-板橋大遠百威秀影城","lat":25.0137,"lng":121.4641},{"name":"CoCoBar-京站小碧潭","lat":24.9734,"lng":121.5303},{"name":"CoCoBar-新店裕隆城威秀影城","lat":24.9780,"lng":121.5457},{"name":"CoCoBar-碧潭廣場","lat":24.9575,"lng":121.5376},{"name":"CoCoBar-中壢威尼斯","lat":24.9626,"lng":121.2255},{"name":"CoCoBar-JC Park(中壢店)","lat":24.9571,"lng":121.2251},{"name":"CoCoBar-桃園ATT筷食尚","lat":24.9902,"lng":121.3129},{"name":"CoCoBar-台茂美麗新影城","lat":25.0526,"lng":121.2882},{"name":"CoCoBar-統領廣場 桃園店","lat":24.9918,"lng":121.3121},{"name":"CoCoBar-置地廣場桃園","lat":25.0130,"lng":121.2139},{"name":"CoCoBar-竹北遠東8F","lat":24.8239,"lng":121.0287},{"name":"CoCoBar-新竹 勝利店","lat":24.8021,"lng":120.9706},{"name":"CoCoBar-大魯閣湳雅廣場","lat":24.8211,"lng":120.9634},{"name":"CoCoBar-竹北享平方","lat":24.8159,"lng":121.0284},{"name":"CoCoBar-新竹大遠百威秀","lat":24.8022,"lng":120.9649},{"name":"CoCoBar-苗栗尚順","lat":24.6893,"lng":120.9074},{"name":"CoCoBar-台中捷運-中清站","lat":24.1729,"lng":120.6556},{"name":"CoCoBar-台中捷運-市政府站","lat":24.1625,"lng":120.6481},{"name":"CoCoBar-新時代威秀","lat":24.1362,"lng":120.6868},{"name":"CoCoBar-台中大遠百威秀影城","lat":24.1643,"lng":120.6436},{"name":"CoCoBar-老虎城","lat":24.1633,"lng":120.6384},{"name":"CoCoBar-豐原IN89","lat":24.2418,"lng":120.7201},{"name":"CoCoBar-台中秀泰站前店","lat":24.1396,"lng":120.6898},{"name":"CoCoBar-新光三越台南中山店","lat":22.9947,"lng":120.2057},{"name":"CoCoBar-台南FOCUS威秀影城","lat":22.9949,"lng":120.2057},{"name":"CoCoBar-國賓一館","lat":22.9959,"lng":120.2319},{"name":"CoCoBar-成大商場1F","lat":22.9953,"lng":120.2173},{"name":"CoCoBar-新光三越高雄左營店","lat":22.6876,"lng":120.3068},{"name":"CoCoBar-MLD台鋁","lat":22.6053,"lng":120.3005},{"name":"CoCoBar-高雄大遠百","lat":22.6133,"lng":120.3039}
         ];
@@ -52,7 +20,7 @@
             
             btn.style.display = 'none';
             loader.style.display = 'block';
-            status.innerText = "正在取得位置...";
+            status.innerText = "正在取得定位...";
 
             navigator.geolocation.getCurrentPosition(position => {
                 const userLat = position.coords.latitude;
@@ -68,9 +36,9 @@
                 status.innerText = "定位成功！";
                 info.innerText = "最近據點：" + nearest.name;
                 
-                // 核心修復：填入導航連結並顯示按鈕
-                // 使用 google maps 網址協議，能更有效喚起 App
-                goBtn.href = `https://google.com{nearest.lat},${nearest.lng}&travelmode=driving`;
+                // 修正後的導航連結寫法，確保變數正確組合
+                const destination = nearest.lat + "," + nearest.lng;
+                goBtn.href = "https://google.com" + destination + "&travelmode=driving";
                 goBtn.style.display = 'block';
                 
             }, (error) => {
@@ -81,5 +49,3 @@
             }, { enableHighAccuracy: true, timeout: 10000 });
         }
     </script>
-</body>
-</html>
