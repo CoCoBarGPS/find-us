@@ -8,6 +8,7 @@
         body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f8f9fa; text-align: center; }
         .container { padding: 30px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 85%; max-width: 400px; }
         .btn { background: #FF9800; color: white; padding: 15px 30px; border-radius: 30px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 20px; width: 100%; box-sizing: border-box; }
+        .btn-go { background: #4CAF50; display: none; } /* 導航按鈕綠色 */
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid #FF9800; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -16,9 +17,15 @@
     <div class="container">
         <div id="loader" class="loader"></div>
         <h2 id="status">尋找最近的 CoCoBar</h2>
-        <p id="info">點擊下方按鈕，系統將為您開啟最近據點的導航。</p>
-        <button id="locateBtn" class="btn" onclick="findNearest()">開始定位並導航</button>
-        <div id="result" style="margin-top: 20px; font-weight: bold; color: #333;"></div>
+        <p id="info">請開啟 GPS 定位，為您尋找最近據點。</p>
+        
+        <!-- 第一步：定位按鈕 -->
+        <button id="locateBtn" class="btn" onclick="findNearest()">1. 點我開始定位</button>
+        
+        <!-- 第二步：導航按鈕 (預設隱藏) -->
+        <a id="goBtn" class="btn btn-go" href="#">2. 點我開始導航</a>
+        
+        <div id="result" style="margin-top: 20px; font-weight: bold; color: #333; font-size: 1.1rem;"></div>
     </div>
 
     <script>
@@ -36,12 +43,14 @@
 
         function findNearest() {
             const btn = document.getElementById('locateBtn');
+            const goBtn = document.getElementById('goBtn');
             const loader = document.getElementById('loader');
             const status = document.getElementById('status');
+            const info = document.getElementById('info');
             
             btn.style.display = 'none';
             loader.style.display = 'block';
-            status.innerText = "定位中，請點擊『允許』...";
+            status.innerText = "正在定位中...";
 
             navigator.geolocation.getCurrentPosition(position => {
                 const userLat = position.coords.latitude;
@@ -53,17 +62,19 @@
                     return (distCurr < distPrev) ? curr : prev;
                 });
 
-                document.getElementById('result').innerText = "即將前往：" + nearest.name;
+                loader.style.display = 'none';
+                status.innerText = "已找到最近據點！";
+                info.innerText = "最近門市：" + nearest.name;
                 
-                setTimeout(() => {
-                    window.location.href = `https://google.com{nearest.lat},${nearest.lng}`;
-                }, 1000);
-
+                // 顯示綠色導航按鈕，並填入連結
+                goBtn.style.display = 'inline-block';
+                goBtn.href = `https://google.com{nearest.lat},${nearest.lng}`;
+                
             }, (error) => {
                 loader.style.display = 'none';
                 btn.style.display = 'block';
                 status.innerText = "定位失敗";
-                alert("請確保已開啟 GPS 並點擊「允許」存取位置，才能尋找最近據點喔！");
+                alert("請點擊『允許』存取位置，或是手動開啟 GPS 功能喔！");
             }, { enableHighAccuracy: true, timeout: 5000 });
         }
     </script>
